@@ -1,0 +1,93 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load humanize %} 
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_list_label" %}{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/medico/listar.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "medicos_page_title" as nome %}
+	{% url 'medico_listar' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="inner-page-title">
+      			<h2>{% trans "doctor_list_inner_title" %} </h2>
+	<span>{% trans "doctor_list_inner_hint" %}</span>
+</div>
+{% if messages %}
+	{% for message in messages %}
+        <div class="response-msg {{ message.tags }} ui-corner-all">
+        	{% if message.tags == "info" %}
+				<span> {% trans "info_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "success" %}
+				<span> {% trans "success_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "error" %}
+				<span> {% trans "error_box_label" %}</span>
+			{% endif %}
+			{{ message }}
+		</div>
+	{% endfor %}
+{% endif %}
+{% if medicos|length > 0 %}
+	<div class="hastable">
+		<form name="myform" method="post" action="" class="lista">
+			<table class="listagem" id="sort-table"> 
+				<thead> 
+					<tr>
+                           <th>{% trans "medico_foto_label" %}</th>
+                           <th>{% trans "medico_nome_label" %}</th>
+                           <th>{% trans "medico_telefone_label" %}</th>
+                           <th>{% trans "medico_email_label" %}</th>
+                           <th>{% trans "medico_precoConsulta_label" %}</th>
+                       		<th>{% trans "medico_agenda_label" %}</th>
+                       			</tr>
+                       		</thead>
+                       		<tbody>
+					{% for medico in medicos %} 
+						<tr>
+							<td>
+								<img src="/static/images/no_picture_doctor_small2.png" />
+							</td>
+							<td>
+								<h3>{{ medico.nome }}</h3>
+								<div class="tooltip" style="color: #1A4A85; cursor: default;" title="{{medico.especialidade.descricao}}">
+									{{ medico.especialidade.nome }}
+								</div>
+							</td>
+							<td>
+								{{ medico.telefone }} <br/>
+							</td>
+							<td>
+								{{ medico.email }}<br/>
+							</td>
+							<td>
+								<div>{% trans "medico_preco_consulta_label" %}
+									{{ medico.precoConsulta|intcomma }}
+								</div>
+							</td>
+							<td>
+								<a href="#" title="{% trans 'open_agenda_button_title' %}" onClick="javascript:abreModalAgenda(event, {{medico.id}})"
+									class="btn_no_text btn ui-state-default ui-corner-all tooltip">
+									<span class="ui-icon i-icon-mail-open"></span>
+								</a>
+							</td>
+						</tr>
+					{% endfor %} 
+				</tbody>
+			</table>
+		</form>
+		{% render_pagination request medicos %}
+	</div>
+{% endif %}
+{% endblock %}
+{% block sidebar %}
+
+{% endblock %}
+ 

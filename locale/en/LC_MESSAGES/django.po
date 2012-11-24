@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-10-13 16:16-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: settings.py:48
+msgid "English"
+msgstr ""
+
+#: settings.py:49
+msgid "Brazilian Portuguese"
+msgstr ""
+
+#: templates/atendimentos/listaAtendimentos.html:7
+msgid "consultation_list_pacient_label"
+msgstr ""
+
+#: templates/atendimentos/listaAtendimentos.html:8
+msgid "consultation_list_status_label"
+msgstr ""
+
+#: templates/atendimentos/listaAtendimentos.html:9
+msgid "consultation_list_data_label"
+msgstr ""
+
+#: templates/atendimentos/listaAtendimentos.html:10
+msgid "consultation_list_options_label"
+msgstr ""
+
+#: templates/atendimentos/listaAtendimentos.html:31
+#: templates/dashboard/atendente.html:71
+msgid "button_confirm_arrival"
+msgstr ""
+
+#: templates/atendimentos/listaAtendimentos.html:40
+#: templates/dashboard/atendente.html:86
+#: templates/dashboard/atendente.html:131
+msgid "nenhuma_consulta_message"
+msgstr ""
+
+#: templates/base/header.html:8
+msgid "Bem vindo"
+msgstr ""
+
+#: templates/base/header.html:11
+msgid "Sair"
+msgstr ""
+
+#: templates/base/header.html:18
+msgid "Painel"
+msgstr ""
+
+#: templates/base/header.html:23
+msgid "Medicos"
+msgstr ""
+
+#: templates/base/header.html:29
+msgid "Pacientes"
+msgstr ""
+
+#: templates/base/header.html:37
+msgid "Atendimentos"
+msgstr ""
+
+#: templates/base/header.html:42
+msgid "Tarefas"
+msgstr ""
+
+#: templates/base/main.html:55
+msgid "close_sidebar_label"
+msgstr ""
+
+#: templates/base/main.html:65
+msgid "create_consultation_modal_title"
+msgstr ""
+
+#: templates/base/main.html:66
+msgid "modal_agenda_manage_title"
+msgstr ""
+
+#: templates/dashboard/atendente.html:11
+msgid "dashboard_atendant_title"
+msgstr ""
+
+#: templates/dashboard/atendente.html:20
+msgid "dashboard_atendant_welcome_message"
+msgstr ""
+
+#: templates/dashboard/atendente.html:22
+msgid "dashboard_atendant_welcome_hint"
+msgstr ""
+
+#: templates/dashboard/atendente.html:29
+msgid "info_box_label"
+msgstr ""
+
+#: templates/dashboard/atendente.html:32
+msgid "success_box_label"
+msgstr ""
+
+#: templates/dashboard/atendente.html:35
+msgid "error_box_label"
+msgstr ""
+
+#: templates/dashboard/atendente.html:43
+msgid "information_section_title"
+msgstr ""
+
+#: templates/dashboard/atendente.html:45
+msgid "information_section_hint"
+msgstr ""
+
+#: templates/dashboard/atendente.html:54
+msgid "header_autocomplete_paciente"
+msgstr ""
+
+#: templates/dashboard/atendente.html:57
+msgid "paciente_nome_label"
+msgstr ""
+
+#: templates/dashboard/atendente.html:61
+msgid "search_pacient_message"
+msgstr ""
+
+#: templates/dashboard/atendente.html:64
+msgid "pacient_info_here_message"
+msgstr ""
+
+#: templates/dashboard/atendente.html:98
+msgid "tabela_pendentes"
+msgstr ""
+
+#: templates/dashboard/atendente.html:105
+msgid "paciente_nome"
+msgstr ""
+
+#: templates/dashboard/atendente.html:106
+msgid "paciente_documento"
+msgstr ""
+
+#: templates/dashboard/atendente.html:107
+msgid "tabela_opcoes"
+msgstr ""
+
+#: templates/dashboard/atendente.html:122
+msgid "botao_confirmar_atendimento"
+msgstr ""
+
+#: templates/dashboard/atendente.html:156
+msgid "personal_section_title"
+msgstr ""
+
+#: templates/dashboard/atendente.html:158
+msgid "personal_section_hint"
+msgstr ""
+
+#: templates/dashboard/atendente.html:169
+msgid "box_tasks_title"
+msgstr ""
+
+#: templates/dashboard/atendente.html:179
+msgid "attention_box_title"
+msgstr ""
+
+#: templates/dashboard/atendente.html:184
+#: templates/dashboard/atendente.html:191
+msgid "link_to_tarefas"
+msgstr ""
+
+#: templates/dashboard/atendente.html:196
+msgid "nenhuma_tarefa_message"
+msgstr ""
+
+#: templates/dashboard/atendente.html:205
+msgid "modal_task_manage_title"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:4
+msgid "box_emails_title"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:13
+msgid "caixa_emails_assunto"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:15
+msgid "caixa_emails_opcoes"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:29
+msgid "box_email_read"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:37
+msgid "link_to_mensagens"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:41
+msgid "nenhuma_mensagem_message"
+msgstr ""
+
+#: templates/dashboard/listaMensagens.html:47
+msgid "modal_emails_manage_title"
+msgstr ""

@@ -1,0 +1,84 @@
+{% load i18n %}
+<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
+	<div class="portlet-header ui-widget-header">
+		{% trans "box_emails_title" %}
+		<span class="ui-icon ui-icon-circle-arrow-s"></span>
+	</div>
+	<div class="portlet-content">
+		<div class="hastable">
+			{% if listaMensagens|length > 0 %}
+				<table cellspacing="0">
+					<thead>
+						<tr>
+							<td>{% trans "caixa_emails_assunto" %}
+							</td>
+							<td>{% trans "caixa_emails_opcoes" %}
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+						{% for mensagem in listaMensagens %}
+							<tr class="{% cycle '' 'alt' %}">
+								<td>
+									{{ mensagem.assunto }}
+								</td>
+								<td style="width: 152px;">
+									<a class="btn ui-state-default ui-corner-all" href="#" 
+										onClick="javascript:abreModalMensagens(event, {{mensagem.id}} );" style="float:left;">
+										<span class="ui-icon ui-icon ui-icon-mail-open"></span>
+										{% trans "box_email_read" %}
+									</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<a href="{% url mensagem_listar %}">
+					{% trans "link_to_mensagens" %}
+				</a>
+			{% else %}
+				<div class="content-box-wrapper">
+					<h4 style="border-bottom:none;font-weight: bold;">{% trans "nenhuma_mensagem_message" %}</h4>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+<div id="modal_mensagens" title="{% trans 'modal_emails_manage_title' %}"></div>
+<script>
+function abreModalMensagens(event, idMensagem) {
+	event.preventDefault();
+	var field = "<input type='hidden' name='mesagem.id' val='' class='mensagem_id'/>"
+	$('#modal_mensagens .mensagem_id').remove();
+	$('#modal_mensagens').append(field);
+	$('#modal_mensagens .mensagem_id').val(idMensagem);
+	var elem = $("div#modal_mensagens");
+	elem.dialog("open");
+	$("div.ui-widget-overlay").bind("click", {elem:elem}, fechaModal);
+}
+
+function fechaModal(event){
+	$(event.data.elem).dialog("close");
+}
+
+jQuery(document).ready(function(){
+	$("div#modal_mensagens").dialog({
+		autoOpen : false,
+		position : [ 'center', 'top' ],
+		width : 475,
+		modal : true,
+		zIndex : 20000,
+		open : function(event, ui) {
+			var idMensagem = $('#modal_mensagens .mensagem_id').val();
+			$.ajax({
+				type : 'GET',
+				url : "../mensagem/inicializaModalDetalhes?mensagem_id=" + idMensagem,
+				success : function(resposta) {
+					$('div#modal_mensagens').html(resposta);
+				}
+			});
+		}
+	});
+	
+})
+</script>

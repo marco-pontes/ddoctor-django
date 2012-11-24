@@ -1,0 +1,87 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load humanize %} 
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_list_label" %}{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/tarefa/listar.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "task_list_title" as nome %}
+	{% url 'tarefa_listar' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="inner-page-title">
+	<h2>
+		{% trans "task_list_welcome_message" %}
+	</h2>
+	<span>{% trans "task_list_welcome_hint" %} </span>
+</div>
+{% if messages %}
+	{% for message in messages %}
+        <div class="response-msg {{ message.tags }} ui-corner-all">
+        	{% if message.tags == "info" %}
+				<span> {% trans "info_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "success" %}
+				<span> {% trans "success_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "error" %}
+				<span> {% trans "error_box_label" %}</span>
+			{% endif %}
+			{{ message }}
+		</div>
+	{% endfor %}
+{% endif %}
+{% if tarefas|length > 0 %}
+	<div class="hastable">
+		<form name="myform" method="post" action="" class="lista">
+			<table class="listagem" id="sort-table"> 
+				<thead> 
+					<tr>
+                           <th>{% trans "task_icone_label" %}</th>
+                           <th>{% trans "task_status_label" %}</th>
+                           <th>{% trans "task_nome_label" %}</th>
+                           <th>{% trans "task_dataCriacao_label" %}</th>
+                           <th>{% trans "task_options_label" %}</th>
+                    </tr>
+                 </thead>
+                 <tbody>
+					{% for tarefa in tarefas %} 
+						<tr>
+							<td>
+								<img src="/static/images/task_small.png">
+							</td>
+							<td>
+								{{ tarefa.status }}
+							</td>
+							<td>
+								{{ tarefa.nome }}
+							</td>
+							<td>
+								 {{ tarefa.dataCriacao|date }}
+							</td>
+							<td>
+								<a class="btn_no_text btn ui-state-default ui-corner-all tooltip" title="{% trans 'open_task_button_title'%}" 
+									onClick="javascript:abreModalTarefa(event, {{tarefa.id}});">
+									<span class='ui-icon i-icon-mail-open'></span>
+								</a>
+								
+							</td>
+						</tr>
+					{% endfor %} 
+				</tbody>
+			</table>
+		</form>
+		{% render_pagination request tarefas %}
+	</div>
+    <div id="modal_tarefas" title="{% trans 'modal_task_manage_title' %}"></div>
+{% endif %}
+{% endblock %}
+{% block sidebar %}
+
+{% endblock %}

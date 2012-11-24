@@ -1,0 +1,70 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_show_label" %}{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/consulta/confirmacao.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "consultation_confirm_title" as nome %}
+	{% url 'dashboard_atendente' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %} 
+
+<div class="inner-page-title">
+      			<h2>{% trans "consultation_confirm_welcome_message" %}</h2>
+	<span>{% trans "consultation_confirm_welcome_hint" %}</span>
+</div>
+<div class="clear"></div>
+<div class="content-box">
+       {% if messages %}
+		{% for message in messages %}
+	        <div class="response-msg {{ message.tags }} ui-corner-all">
+	        	{% if message.tags == "info" %}
+					<span> {% trans "info_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "success" %}
+					<span> {% trans "success_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "error" %}
+					<span> {% trans "error_box_label" %}</span>
+				{% endif %}
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+	{% include 'consulta/_mostrar.html' with smallPictures=False  %}
+	{% if consulta.status == consulta.CANCELADA %}
+    	<div class="response-msg error ui-corner-all">
+			<span>{% trans "info_box_label" %}</span>
+			{% trans "consultation_status_canceled" %}
+		</div>
+	{% endif %} 
+	{% if tarefa.id != None and tarefa.status != tarefa.FINALIZADA %}
+		<ul>
+			<li class="buttons"><a
+				href="{% url consulta_confirmar %}?id={{ tarefa.consulta.id }}&tarefa_id={{tarefa.id}}&irPara=dashboard"
+				class="btn ui-state-default ui-corner-all" style="float: left;"
+				onclick="return confirm({% trans 'message_confirm_consultation_confirmation' %});">
+					<span class="ui-icon ui-icon ui-icon-link"></span> 
+					{% trans "button_confirm_consultation_label" %}
+			</a> <a
+				href="{% url consulta_cancelar %}?id={{ tarefa.consulta.id }}&tarefa_id={{tarefa.id}}"
+				class="btn ui-state-default ui-corner-all" style="float: left;"
+				onclick="return confirm({% trans 'message_cancel_consultation_confirmation' %});">
+					<span class="ui-icon ui-icon ui-icon-link"></span> 
+					{% trans "button_cancel_consultation_label" %}
+			</a></li>
+		</ul>
+		<div class="clear"></div>
+	{% endif %}
+</div>
+{% endblock %}
+{% block sidebar %}
+
+{% endblock %}
+        		

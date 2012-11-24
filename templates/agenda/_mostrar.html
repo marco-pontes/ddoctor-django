@@ -1,0 +1,97 @@
+{% load i18n %}
+<div id="page-layout">
+	<div id="page-content">
+		<div id="page-content-wrapper">
+			<div class="inner-page-title">
+				<h2>
+					{% blocktrans %}Agenda do medico {{ medico.first_name }}{% endblocktrans %}
+				</h2>
+				<span>{% trans "agenda_show_welcome_hint" %}</span>
+			</div>
+			<div class="clear"></div>
+			<div class="content-box">
+			{% if messages %}
+				{% for message in messages %}
+			        <div class="response-msg {{ message.tags }} ui-corner-all">
+			        	{% if message.tags == "info" %}
+							<span> {% trans "info_box_label" %}</span>
+						{% endif %}
+						{% if message.tags == "success" %}
+							<span> {% trans "success_box_label" %}</span>
+						{% endif %}
+						{% if message.tags == "error" %}
+							<span> {% trans "error_box_label" %}</span>
+						{% endif %}
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+				<div class="other-box gray-box float-left ui-corner-all"
+					style="width: 100%">
+					<div class="cont ui-corner-all">
+						<h3>
+							{{ medico.first_name }}
+						</h3>
+					</div>
+					<div id="tabs" class="ui-widget ui-corner-all">
+						<div id="tabs-1" class="ui-corner-bottom">
+							<div id="agenda"></div>
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="invisivel">
+	{% for consulta in medico.agenda.consultas.all %}
+		<div class="evento">
+			{% if request.user.groups.all.0.name == 'ROLE_ATENDENTE' %}
+				<span class="titulo">{% blocktrans %}consultation_scheduled_name {{ consulta.paciente.first_name }} {% endblocktrans %}</span>
+			{% else %}
+				<span class="titulo">{% trans "consultation_scheduled_noname" %} </span>
+			{% endif %}
+			<span class="inicio">{{ consulta.data|date:"SHORT_DATETIME_FORMAT" }}</span>
+		</div>
+	{% endfor %}
+</div>
+
+<script>
+	$(document).ready(function() {
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		var h = date.getHours();
+		var eventos = [];
+		function adicionaEvento(){
+			var evento = new Object(); 
+			var titulo = $(this).find('span.titulo').html();
+			var inicio = new Date($(this).find('span.inicio').html());
+			evento.title = titulo;
+			evento.start = inicio;
+			evento.end = inicio;
+			evento.allDay = false;
+			eventos.push(evento);
+		}
+		
+		$('.evento').each(adicionaEvento);
+		
+		
+		$('div#agenda').fullCalendar({
+			theme: false,
+			allDaySlot:true,
+			minTime:6,
+			maxTime:18,
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+				}, 
+			editable: true,
+			events: eventos
+		});
+	})
+
+</script>

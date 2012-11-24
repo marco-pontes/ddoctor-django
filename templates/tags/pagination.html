@@ -1,0 +1,23 @@
+{% if objects.num_pages > 1 %}
+	<div class="paginacao">
+	    <span class="step-links">
+	        {% if objects.has_previous %}
+	            <a class="nextLink btn_no_text btn ui-state-default ui-corner-all next" 
+	            	href="?page={{ objects.previous_page_number }}"></a>
+	        {% endif %}
+			{% for i in objects.paginator.page_range %}
+				{% if i == objects.number %}
+			        <span class="currentStep">
+			            {{ i }}
+			        </span>
+			    {% else %}
+			    	<a class="step" href="?page={{ i }}">{{ i }}</a>
+			    {% endif %}
+			{% endfor %}
+	        {% if objects.has_next %}
+	            <a class="nextLink btn_no_text btn ui-state-default ui-corner-all next" 
+	            	href="?page={{ objects.next_page_number }}"></a>
+	        {% endif %}
+	    </span>
+	</div>
+{% endif %}

@@ -1,0 +1,112 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_show_label" %}{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "consultation_show_title" as nome %}
+	{% url 'dashboard_atendente' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %} 
+<div class="inner-page-title">
+    <h2>{% trans "atendimento_show_welcome_message" %}</h2>
+	<span>{% trans "atendimento_show_welcome_hint" %}</span>
+</div>
+<div class="clear"></div>
+<div class="content-box">
+      	{% if messages %}
+		{% for message in messages %}
+	        <div class="response-msg {{ message.tags }} ui-corner-all">
+	        	{% if message.tags == "info" %}
+					<span> {% trans "info_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "success" %}
+					<span> {% trans "success_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "error" %}
+					<span> {% trans "error_box_label" %}</span>
+				{% endif %}
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+	<div class="other-box gray-box ui-corner-all">
+		<div class="cont ui-corner-all">
+			<h2>
+				{% trans "atendimento_status_label" %}
+				{{ atendimento.status }}
+			</h2>
+			<br/>
+			<div class="paciente">
+				<h2>{% trans "pacient_section_title" %}</h2>
+				<div class="foto">
+					<img src="/static/images/no_picture.png">
+				</div>
+				<div class="dados">
+					<a href="{% url paciente_mostrar id=atendimento.consulta.paciente.id %}">
+						<h3>{{ atendimento.consulta.paciente.first_name }}</h3>
+					</a>
+					<div style="padding: 20px 10px;">
+						{% trans "paciente_telefone_label" %}
+						{{ atendimento.consulta.paciente.telefone }} <br/>
+						{% trans "paciente_email_label" %}
+						{{ atendimento.consulta.paciente.email }}<br/>
+					</div>
+				</div>
+			</div>
+			<div class="medico">
+				<h2>{% trans "doctor_section_title" %} </h2>
+				<div class="foto">
+					<img src="/static/images/no_picture_doctor2.png">
+				</div>
+				<div class="dados">
+					<a href="{% url medico_mostrar id=atendimento.consulta.medico.id %}">
+						<h3>{{ atendimento.consulta.medico.first_name }}</h3>
+					</a>
+					<div style="padding: 20px 10px;">
+						{% trans "paciente_telefone_label" %}
+						{{ atendimento.consulta.medico.telefone }} <br/>
+						{% trans "paciente_email_label" %}
+						{{ atendimento.consulta.medico.email }}<br/>
+					</div>
+				</div>
+				<div style="float:left;width:20%;padding: 20px 10px;">
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+	<div class="other-box yellow-box ui-corner-all">  
+		<div class="cont ui-corner-all">
+			<h3>{% trans "consultation_date_info" %} </h3>
+			{% trans "consultation_status_label" %}
+				{{ atendimento.consulta.status }} <br/>
+			<b>
+				{% trans "consultation_date_label" %}
+				{{ atendimento.consulta.data|date }}
+			</b>
+			<br/>
+			<b>
+				{% trans "atendimento_date_label" %}
+				{{ atendimento.data|date }}
+			</b>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block sidebar %}
+{% if request.user.groups.all.0.name == "ROLE_ATENDENTE"  %}
+	<div class="box ui-widget ui-widget-content ui-corner-all">
+		<h3>Atendimentos</h3>
+		<div class="content">
+			<a class="btn ui-state-default full-link ui-corner-all atendimento_criar" href="#">
+				<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+				{% trans "button_atendimento_new_label" %}  
+			</a>
+		</div>
+	</div>
+	<div class="clear"></div>
+{% endif %}
+{% endblock %}

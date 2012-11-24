@@ -1,0 +1,65 @@
+{% load i18n %}
+<div class="other-box gray-box ui-corner-all">
+	<div class="cont ui-corner-all">
+		<div class="paciente">
+			<h2>{% trans "pacient_section_title" %}</h2>
+				{% if smallPictures == True %}
+					<div class="foto_pequena">
+						<img src="/static/images/no_picture_small.png">
+					</div>
+				{% else %}
+					<div class="foto">
+						<img src="/static/images/no_picture.png">
+					</div>
+				{% endif %}
+			<div class="dados">
+				<a href="{% url paciente_mostrar id=consulta.paciente.id %}">
+					<h3>{{ consulta.paciente.first_name }}</h3>
+				</a>
+				<div style="padding: 20px 10px;">
+					{% trans "paciente_telefone_label" %}
+					{{ consulta.paciente.telefone }} <br/>
+					{% trans "paciente_email_label" %}
+					{{ consulta.paciente.email }} <br/>
+				</div>
+			</div>
+		</div>
+		<div class="medico">
+			<h2>{% trans "doctor_section_title" %} </h2>
+				{% if smallPictures == True  %}
+					<div class="foto_pequena">
+						<img src="/static/images/no_picture_doctor_small2.png">
+					</div>
+				{% else %}
+					<div class="foto">
+						<img src="/static/images/no_picture_doctor2.png">
+					</div>
+				{% endif %}
+			<div class="dados">
+			<a href="{% url medico_mostrar id=consulta.medico.id %}">
+					<h3>{{ consulta.medico.first_name }}</h3>
+				</a>
+				<div style="padding: 20px 10px;">
+					{% trans "paciente_telefone_label" %}
+					{{ consulta.medico.telefone }} <br/>
+					{% trans "paciente_email_label" %}
+					{{ consulta.medico.email }}<br/>
+				</div>
+			</div>
+			<div style="float:left;width:20%;padding: 20px 10px;">
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<div class="other-box yellow-box ui-corner-all">  
+	<div class="cont ui-corner-all">
+		<h3>{% trans "consultation_date_info" %} </h3>
+		{% trans "consultation_status_label" %}
+		{{ consulta.status }} <br/>
+		<b>
+			{% trans "consultation_date_label" %}
+			{{ consulta.data|date }}
+		</b>
+	</div>
+</div>

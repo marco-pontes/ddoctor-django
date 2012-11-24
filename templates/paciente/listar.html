@@ -1,0 +1,80 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_list_label" %}{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/paciente/listar.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "pacients_page_title" as nome %}
+	{% url 'paciente_listar' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="inner-page-title">
+      	<h2>{% trans "pacient_list_inner_title" %} </h2>
+	<span>{% trans "pacient_list_inner_hint" %}</span>
+</div>
+<div class="clear"></div>
+         {% if messages %}
+	{% for message in messages %}
+        <div class="response-msg {{ message.tags }} ui-corner-all">
+        	{% if message.tags == "info" %}
+				<span> {% trans "info_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "success" %}
+				<span> {% trans "success_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "error" %}
+				<span> {% trans "error_box_label" %}</span>
+			{% endif %}
+			{{ message }}
+		</div>
+	{% endfor %}
+{% endif %}
+{% if pacientes|length > 0 %}
+     <div class="hastable">
+		<form name="myform" method="post" action="" class="lista">
+			<table class="listagem" id="sort-table"> 
+				<thead> 
+					<tr>
+                           <th class="header">{% trans "paciente_foto_label" %}</th>
+                           <th class="header">{% trans "paciente_nome_label" %}</th>
+                           <th class="header">{% trans "paciente_email_label" %}</th>
+                           <th class="header">{% trans "paciente_telefone_label" %}</th>
+                           <th class="header">{% trans "paciente_dataNascimento_label" %}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for paciente in pacientes %} 
+						<tr>
+							<td>
+								<img src="/static/images/no_picture_small.png" />
+							</td>
+							<td>
+								<h3>{{ paciente.first_name }}</h3>
+							</td>
+							<td>
+								{{ paciente.email }}
+							</td>
+							<td>
+								{{ paciente.telefone }}
+							</td>
+							<td>
+								{{ paciente.planoSaude.nome }}
+							</td>
+						</tr>
+					{% endfor %} 
+				</tbody>
+			</table>
+		</form>
+{% endif %}
+{% render_pagination request pacientes %}
+</div>
+{% endblock %}
+{% block sidebar %}
+
+{% endblock %}

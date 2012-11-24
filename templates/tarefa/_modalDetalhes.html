@@ -1,0 +1,57 @@
+{% load i18n %}
+<div id="page-layout">
+	<div id="page-content">
+		<div id="page-content-wrapper">
+			<div class="clear"></div>
+			<div class="content-box">
+	            {% if messages %}
+					{% for message in messages %}
+				        <div class="response-msg {{ message.tags }} ui-corner-all">
+				        	{% if message.tags == "info" %}
+								<span> {% trans "info_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "success" %}
+								<span> {% trans "success_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "error" %}
+								<span> {% trans "error_box_label" %}</span>
+							{% endif %}
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+         		<div class="cont ui-corner-all" style="line-height:1">
+					<h3 style="display:inline;font-weight: bold;">{{ tarefa.nome }}</h3>
+					<div class="task-text">
+						{{ tarefa.descricao }}
+					</div>
+					{% include 'consulta/_mostrar.html' with consulta=tarefa.consulta smallPictures=True %}
+					<div class="buttons-wrapper">
+						{% if tarefa.consulta.status == tarefa.consulta.PENDENTE %}
+							<a href="{% url consulta_mostrar tarefa.consulta.id  %}?tarefa_id={{tarefa.id}}" 
+								class="btn ui-state-default ui-corner-all" style="float:left;">
+								<span class="ui-icon ui-icon ui-icon-link"></span>
+		  						{% trans "task_object_details_button" %}
+							</a>
+							
+							<a href="{% url consulta_confirmar %}?id={{ tarefa.consulta.id }}&tarefa_id={{tarefa.id}}&irPara=dashboard" 
+								class="btn ui-state-default ui-corner-all" style="float:left;" 
+								onclick="return confirm({% trans 'message_confirm_consultation_confirmation' %});">
+								<span class="ui-icon ui-icon ui-icon-link"></span>
+	  							{% trans "button_confirm_consultation_label" %}
+							</a>
+
+							<a href="{% url consulta_cancelar %}?id={{ tarefa.consulta.id }}&tarefa_id={{tarefa.id}}" 
+								class="btn ui-state-default ui-corner-all" style="float:left;" 
+								onclick="return confirm({% trans 'message_cancel_consultation_confirmation' %});">
+								<span class="ui-icon ui-icon ui-icon-link"></span>
+	  							{% trans "button_cancel_consultation_label" %}
+							</a>							
+						{% endif %}
+						<div class="clear"></div>
+					</div>
+        		</div>
+			</div>
+		</div>
+	</div>	
+</div>

@@ -1,0 +1,26 @@
+					
+					{% if user.groups.all.0.name == "ROLE_ADMIN" %}
+						{% if params.controller == "medico" and params.action == "listar" %}		
+							<div class="box ui-widget ui-widget-content ui-corner-all">
+								<h3>{% trans :sidebar_admin_section %}</h3>
+								<div class="content">
+									{% link_to "", :class => 'btn ui-state-default full-link ui-corner-all consulta_criar', :href => "#" do %}
+										<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+										{% trans :botao_incluir_consulta %}
+									{% end %}
+								</div>
+							</div>
+						{% end %}
+						{% if params.controller == "paciente" and params.action == "listar" %}	
+							<div class="box ui-widget ui-widget-content ui-corner-all">
+								<h3>{% trans :sidebar_admin_section %}</h3>
+								<div class="content">
+									{% link_to paciente_create_path, :class => 'btn ui-state-default full-link ui-corner-all' do %}
+										<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+										{% trans :button_pacient_new_label %}
+									{% end %}
+								</div>
+							</div>
+							<div class="clear"></div>
+						{% end %}
+					{% end %}

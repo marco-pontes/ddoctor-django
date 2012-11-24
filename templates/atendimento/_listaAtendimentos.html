@@ -1,0 +1,42 @@
+{% load i18n %}
+{% if atendimentosAguardandoChegada|length > 0 %}
+	<table >
+		<thead>
+			<tr>
+				<td><input type="checkbox" class="checkbox" value="" /></td>
+				<td>{% trans "consultation_list_pacient_label" %}</td>
+				<td>{% trans "consultation_list_status_label" %}</td>
+				<td>{% trans "consultation_list_data_label" %}</td>
+				<td>{% trans "consultation_list_options_label" %}</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for atendimento in atendimentosAguardandoChegada %}
+				<tr class="{% cycle '' 'alt' %}">  	  	
+					<td>
+						<input type="checkbox" class="checkbox" value=""/>
+					</td>
+					<td>
+						{{ atendimento.paciente.first_name }}
+					</td>
+					<td>
+						{{ atendimento.status }}  
+					</td>
+					<td>
+						{{  atendimento.consulta.data|date:"DATE_FORMAT" }}  
+					</td>
+					<td>
+						<a class="btn ui-state-default ui-corner-all" href="javascript: confirmaChegada({{atendimento.id}});" >
+							<span class="ui-icon ui-icon ui-icon-gripsmall-diagonal-se"></span>
+							{% trans "button_confirm_arrival" %}
+						</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+	<div class="content-box-wrapper">
+		<h4 style="border-bottom:none;">{% trans "nenhuma_consulta_message" %}</h4>
+	</div>
+	{% endif %}

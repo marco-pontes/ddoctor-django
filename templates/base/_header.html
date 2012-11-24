@@ -1,0 +1,53 @@
+{% load i18n %}
+	<div id="page_wrapper">
+		<div id="page-header">
+			<div id="page-header-wrapper">
+				<div id="top">
+					<a href="dashboard.php" class="logo" title="Admintasia V2.0">Admintasia V2.0</a>
+					<div class="welcome">
+						<span class="note">{% trans "Bem vindo" %} <a href="#">{{ user.username }}</a></span>
+						<a href="{% url auth_logout %}" class="btn ui-state-default ui-corner-all">
+							<span class="ui-icon ui-icon-power"></span>
+  							{% trans "Sair" %}
+						</a>		
+					</div>
+				</div>
+				<ul id="navigation">
+					<li>
+					<a href="{% url dashboard_index %}" class="sf-with-ul">
+  						{% trans "Painel" %}
+					</a>		
+					</li>
+					<li>
+						<a href="{% url medico_listar %}" class="sf-with-ul">
+	  						{% trans "Medicos" %}
+						</a>
+					</li>
+					{% if user.groups.all.0.name == "ROLE_ATENDENTE" or user.groups.all.0.name == "ROLE_MEDICO" %}
+						<li>
+							<a href="{% url paciente_listar %}" class="sf-with-ul">
+		  						{% trans "Pacientes" %}
+							</a>
+						</li>
+					{% endif %}
+
+					{% if user.groups.all.0.name == "ROLE_ATENDENTE" %}
+						<li>
+							<a href="{% url atendimento_listar %}" class="sf-with-ul">
+		  						{% trans "Atendimentos" %}
+							</a>
+						</li>
+						<li>
+							<a href="{% url tarefa_listar %}" class="sf-with-ul">
+		  						{% trans "Tarefas" %}
+							</a>
+						</li>
+					{% endif %}
+			</ul>
+				<div id="search-bar">
+					<form method="post" action="http://www.google.com/">
+						<input type="text" name="q" value="live search demo" />
+					</form>
+				</div> 
+			</div>
+		</div> 

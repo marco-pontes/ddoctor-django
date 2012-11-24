@@ -1,0 +1,82 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_list_label" %}{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/mensagem/listar.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "message_list_title" as nome %}
+	{% url 'mensagem_listar' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="inner-page-title">
+      			<h2>{% trans "messages_list_inner_title" %} </h2>
+	<span>{% trans "messages_list_inner_hint" %}</span>
+</div>
+<div class="content-box">
+	<div class="clearfix"></div>
+       {% if messages %}
+		{% for message in messages %}
+	        <div class="response-msg {{ message.tags }} ui-corner-all">
+	        	{% if message.tags == "info" %}
+					<span> {% trans "info_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "success" %}
+					<span> {% trans "success_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "error" %}
+					<span> {% trans "error_box_label" %}</span>
+				{% endif %}
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+       
+	{% if mensagens|length > 0 %}
+		<div class="hastable">
+			<form name="myform" class="pager-form" method="post" action="">
+				<table id="sort-table"> 
+					<thead> 
+					<tr>
+						<th>{% trans "mensagem_corpo_label" %}</th> 
+						<th>{% trans "mensagem_asunto_label" %}</th> 
+						<th>{% trans "mensagem_dataEnvio_label" %}</th> 
+						<th style="width:64px">{% trans "table_options" %}</th> 
+					</tr> 
+					</thead> 
+					<tbody>
+						{% for mensagem in mensagens %} 
+							<tr>
+		                        <td>{{ mensagem.corpo }}</td>
+		                        <td>{{ mensagem.assunto }}</td>
+		                        <td>{{ mensagem.dataEnvio|date }}</td>
+		                    	<td>
+		                    		<a class="btn_no_text ui-state-default ui-corner-all tooltip" href="#" onClick="javascript:abreModalMensagens(event, {{mensagem.id}} );" 
+		                    			style="float:left;" title="{% trans 'open_message_button_title' %}">
+										<span class="ui-icon ui-icon ui-icon-mail-open"></span>
+		                    		</a>
+		                    		
+		                    		<a class="btn_no_text ui-state-default ui-corner-all tooltip" href="#" onClick="javascript:apagaEmail(event, {{mensagem.id}})" 
+		                    			style="float:left;" title="{% trans 'delete_message_button_title' %}">
+										<span class="ui-icon ui-icon-trash"></span>
+		                    		</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</form>
+		    <div id="modal_mensagens" title="{% trans 'modal_emails_manage_title' %}"></div>
+				{% render_pagination request mensagens %}
+		</div>
+	{% endif %}
+	{% endblock %}
+	{% block sidebar %}
+			
+	{% endblock %}
+</div>

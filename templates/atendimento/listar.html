@@ -1,0 +1,102 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_list_label" %}{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/atendimento/listar.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "consultation_list_title" as nome %}
+	{% url 'atendimento_listar' as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="inner-page-title">
+    <h2>{% trans "consultation_list_inner_title" %}</h2>
+	<span>{% trans "consultation_list_inner_hint" %}</span>
+</div>
+{% if messages %}
+	{% for message in messages %}
+        <div class="response-msg {{ message.tags }} ui-corner-all">
+        	{% if message.tags == "info" %}
+				<span> {% trans "info_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "success" %}
+				<span> {% trans "success_box_label" %}</span>
+			{% endif %}
+			{% if message.tags == "error" %}
+				<span> {% trans "error_box_label" %}</span>
+			{% endif %}
+			{{ message }}
+		</div>
+	{% endfor %}
+{% endif %}
+{% if atendimentos|length > 0 %}
+<div class="hastable">
+	<form name="myform" method="post" action="" class="lista">
+		<table class="listagem" id="sort-table"> 
+			<thead> 
+				<tr>
+					<th>{% trans "atendimento_numero_label" %}</th>
+					<th>{% trans "atendimento_status_label" %}</th>
+					<th>{% trans "atendimento_horario_label" %}</th>
+                    <th>{% trans "atendimento_paciente_label" %}</th>
+                    <th>{% trans "atendimento_medico_label" %}</th>
+                </tr>
+             </thead>
+             <tbody>
+				{% for atendimento in atendimentos %} 
+					<tr>
+						<td>
+							<a href="{% url atendimento_mostrar id=atendimento.id %}">
+							<img src="/static/images/pen_paper_icon_small.png">
+								{{ atendimento.id }}
+							</a>
+						</td>
+						<td>
+							<h3>{{ atendimento.status }}</h3>
+						</td>
+						<td>
+							{% if atendimento.data != None %}
+								{{ atendimento.data|date }}
+							{% else %}
+								{% trans "nao_atendido_label" %}
+							{% endif %}
+						</td>
+						<td>
+							<a href="{% url paciente_mostrar id=atendimento.paciente.id %}">
+								{{ atendimento.paciente.first_name }}
+							</a>
+						</td>
+						<td>
+							<a href="{% url medico_mostrar id=atendimento.consulta.medico.id %}">
+								{{ atendimento.consulta.medico.first_name }}
+							</a>
+						</td>
+					</tr>
+				{% endfor %} 
+			</tbody>
+		</table>
+	</form>
+	{% render_pagination request atendimentos %}
+</div>
+{% endif %}
+{% endblock %}
+{% block sidebar %}
+{% if request.user.groups.all.0.name == "ROLE_ATENDENTE"  %}
+	<div class="box ui-widget ui-widget-content ui-corner-all">
+		<h3>Atendimentos</h3>
+		<div class="content">
+			<a class="btn ui-state-default full-link ui-corner-all atendimento_criar" href="#">
+				<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+				{% trans "button_atendimento_new_label" %}  
+			</a>
+		</div>
+	</div>
+	<div class="clear"></div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,235 @@
+{% load i18n %}
+				<div id="page-content-wrapper">
+					<div class="inner-page-title">
+	          			<h2>{% trans "consulta_criar_title" %} </h2>
+						<span>{% trans "consulta_criar_hint" %}</span>
+					</div>
+					<div class="clear"></div>
+					<div class="content-box">
+				        {% if messages %}
+							{% for message in messages %}
+						        <div class="response-msg {{ message.tags }} ui-corner-all">
+						        	{% if message.tags == "info" %}
+										<span> {% trans "info_box_label" %}</span>
+									{% endif %}
+									{% if message.tags == "success" %}
+										<span> {% trans "success_box_label" %}</span>
+									{% endif %}
+									{% if message.tags == "error" %}
+										<span> {% trans "error_box_label" %}</span>
+									{% endif %}
+									{{ message }}
+								</div>
+							{% endfor %}
+						{% endif %}
+							{% if messages %}	
+							   <div class="response-msg error ui-corner-all">
+							     <span>{% trans "error_box_label" %}</span>
+									{% for field in consultaForm %}
+									{% for error in field.errors %}
+									     <li> [{{ field.label}}] {{ error }} </li>
+									  {% endfor %}
+									{% endfor %}
+							    </div>
+							{% endif %}
+						  	<form class="forms marcar_consulta" id="form_consulta" method="post">
+						  	{% csrf_token %}
+								<input type="hidden" name="idPaciente" value="{{user.id}}" />
+								<div>
+	                                <label for="especialidade" class="desc">
+										{% trans "medico_especialidade_label" %}
+									</label>
+									<div class="">
+										{{ consultaForm.especialidade.errors }}
+								        {{ consultaForm.especialidade }}
+	                              	</div>
+								</div>
+								
+								<div style="display:none;" id="medicos">
+	                                <label for="medico" class="desc">
+										{% trans "consulta_medico_label" %}
+									</label>
+									<div class="">
+										{{ consultaForm.medico.errors }}
+								        {{ consultaForm.medico }}
+	                              	</div>
+								</div>
+								
+								<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" id="wrapper_agenda" style="display:none;width:50%;">
+									<div class="portlet-header ui-widget-header">
+									{% trans "agenda_medico" %}
+										<span class="ui-icon ui-icon-circle-arrow-s"></span>
+			                  		</div>
+			                  		<div class="portlet-content">
+			                  			<div id="agenda">
+			                  				{{ consultaForm.dataConsulta }}
+			                  			</div>
+			                  		</div>
+			                  	</div>
+				                <div id="wrapper_resumo" class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all invisivel" style="width:50%;">
+			               			<div class="portlet-content">
+				               			<h4>{% trans "titulo_resumo_consulta" %}</h4>
+				               			<div id="resumo"></div>
+			               			</div>
+			               		</div>
+			                  	<div class="clearfix"></div>
+			                  
+				                <div class="buttons">
+				                    <span id="consulta_marcar" class="ui-state-default ui-corner-all ui-button" style="display: block;width:200px;">{% trans "button_marcar_consulta_label" %} </span>
+				                </div>
+		                  		<div class="clearfix"></div>
+								</form>
+		        			</div>
+						</div>
+			<div id="modal_sucesso" title="{% trans 'modal_sucesso_consulta_title' %}"></div>
+		<script>
+		$(document).ready(function() {
+			
+				function adicionaOptionSelect(medico){
+					$('#id_medico').append("<option value=" + medico.id + ">" + medico.nome + "</option>");
+				}
+				var date = new Date();
+				var d = date.getDate();
+				var m = date.getMonth();
+				var y = date.getFullYear();
+				var h = date.getHours();
+				var eventos = [];
+				
+				function adicionaEvento(consulta){
+					var evento = new Object(); 
+						var titulo = "consulta" + consulta.id;
+						var inicio = new Date(consulta.data);
+						evento.title = titulo;
+						evento.start = inicio;
+						evento.allDay = false;
+						eventos.push(evento);
+				}
+				
+				function criaAgenda(consultas){
+					if(consultas){
+						for (i in consultas){
+							adicionaEvento(consultas[i]);
+						}
+					}
+					$('div#agenda').fullCalendar({
+						 select: function( startDate, endDate, allDay, jsEvent, view ){
+							 $('input#consulta_data').val(Globalize.format( startDate, "dd/MM/yyyy hh:mm"));
+							 atualizaResumo();
+						 },
+//						    dayClick: function(date, allDay, jsEvent, view) {
+			//
+//						        if (allDay) {
+//						            alert('Clicked on the entire day: ' + date);
+//						        }else{
+//						            alert('Clicked on the slot: ' + date);
+//						        }
+//						    },
+						theme: false,
+						defaultView:'agendaWeek',
+						allDaySlot:true,
+						slotMinutes:20,
+						minTime:8,
+						maxTime:18,
+						selectable:true,
+						weekends: false,
+						events:eventos
+					});
+				}
+				
+				function buscaMedicos() {
+					if ($(this).val()) {
+						$.ajax({
+							type : 'GET',
+							url : "/medico/buscaMedicosPorEspecialidade?especialidade_id=" + $(this).val(),
+							success : function(resposta) {
+								$('#id_medico option').remove();
+								$('#id_medico').append("<option value='-1'>Selecionar</option>");
+								if (resposta.length > 0) {
+									for(i in resposta){
+										adicionaOptionSelect(resposta[i]);
+									}
+									$('div#medicos').fadeIn(400);
+								} else {
+									$('div#medicos').fadeOut(400);
+									$('div#wrapper_agenda').fadeOut(400);
+								}
+							}
+						});
+					} else {
+						$('div#medicos').fadeOut(400);
+					}
+				}
+				
+				
+				function buscaAgendaMedico() {
+					atualizaResumo();
+					$('div#wrapper_resumo').fadeIn(800);
+					if ($(this).val() != -1) {
+						$.ajax({
+							type : 'GET',
+							url : "/medico/buscaAgendaMedico?medico_id=" + $(this).val(),
+							success : function(resposta) {
+								$('div#wrapper_agenda').fadeIn(400);
+								$('div#agenda').fullCalendar( 'destroy' );
+								criaAgenda(resposta.consultas);
+							}
+						});
+					} else {
+						$('div#wrapper_agenda').fadeOut(400);
+					}
+				}
+
+				$('select#id_especialidade').bind('change', buscaMedicos);
+				$('select#id_medico').bind('change', buscaAgendaMedico);
+		});
+
+		$("div#modal_sucesso").remove();
+		$(document.body).append("<div id='modal_sucesso' class='' style='display: none;' title='Mensagem'> </div>");
+		
+		$("div#modal_sucesso").dialog({
+			autoOpen:false,
+			stack:true,
+			buttons: {
+				"OK": function() {
+					if($(this).data('resposta').cod != 0){
+						window.location.reload();
+					}
+					else{
+						$(this).dialog( "destroy" );
+						$('div#modal_consulta').html($(this).data('resposta').html);
+					}
+				}
+			},
+			modal:true
+		});
+		
+		function salvar() {
+			$.ajax({
+				type : 'POST',
+				url : "/consulta/salvar/",
+				data : $('form#form_consulta').serialize(),
+				success : function(resposta) {
+					$("div#modal_sucesso").text(resposta.msg);
+					$('span#consulta_marcar').unbind("click", salvar);
+					$("div#modal_sucesso").data('resposta', resposta).dialog("open");
+				}
+			});
+		}
+		$('span#consulta_marcar').unbind("click");
+		$('span#consulta_marcar').bind("click", salvar);
+
+
+		function atualizaResumo() {
+			var medico = $('select#id_medico :selected').text();
+			var data = $('input#consulta_data').val();
+			var htmlResumo = ""
+			if(medico != ""){
+				htmlResumo += "Medico: " + medico + " <br/>" 
+			}
+			if(data != ""){
+				htmlResumo += "Data: " + data + " <br/>" 
+			}
+			$('div#wrapper_resumo #resumo').html(htmlResumo);
+		}
+		
+		</script>

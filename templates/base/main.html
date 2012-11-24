@@ -1,0 +1,142 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{% block title %}DDoctor{% endblock %}</title>
+		<link href="/static/css/ui/ui.base.css" rel="stylesheet" media="all" />
+		<link href="/static/css/themes/black_rose/ui.css" rel="stylesheet" title="style" media="all" />
+		<link href="/static/css/fullcalendar.css" rel="stylesheet" title="style" media="all" />
+		<link href="/static/css/main.css" rel="stylesheet" title="style" media="all" />
+		
+		<script type="text/javascript" src="/static/js/jquery-1.7.1.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.core.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.widget.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.mouse.js"></script>
+		<script type="text/javascript" src="/static/js/superfish.js"></script>
+		<script type="text/javascript" src="/static/js/live_search.js"></script>
+		<script type="text/javascript" src="/static/js/tooltip.js"></script>
+		<script type="text/javascript" src="/static/js/cookie.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.sortable.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.draggable.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.resizable.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.position.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.button.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.dialog.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.tabs.js"></script>
+		<script type="text/javascript" src="/static/js/ui/ui.datepicker.js"></script>
+		<script type="text/javascript" src="/static/js/ui/fullcalendar.min.js"></script>
+		<script type="text/javascript" src="/static/js/ui/I18N/jquery.ui.datepicker-pt-BR.js"></script>
+		<script type="text/javascript" src="/static/js/ui/jquery.ui.autocomplete.js"></script>
+		<script type="text/javascript" src="/static/js/i18n/globalize.js"></script>
+		<script type="text/javascript" src="/static/js/custom.js"></script>
+		<script type="text/javascript" src="/static/js/application.js"></script>
+		{% block header %} {% endblock %}
+	</head>
+	<body>
+		{% if request.session.django_language %}
+			<input type="hidden" value="{{ request.session.django_language }}" id="local"/>
+		{% endif %}
+		{% include "base/_header.html" %}
+		<div id="sub-nav">
+			{% block breadcrumb %}
+			{% endblock %}
+		</div>
+		<div id="page-layout">
+			<div id="page-content">
+				<div id="page-content-wrapper">
+					{% block conteudo %}Conteudo{% endblock %}
+					
+					<!-- 	begin sidebar				 -->
+					
+					<div id="sidebar">
+						<div class="sidebar-content">
+							<a id="close_sidebar" class="btn ui-state-default full-link ui-corner-all" href="#drill">
+								<span class="ui-icon ui-icon-circle-arrow-e"></span>
+								{% trans "close_sidebar_label" %}
+							</a>
+							<a id="open_sidebar" class="btn tooltip ui-state-default full-link icon-only ui-corner-all" title="Open Sidebar" href="#"><span class="ui-icon ui-icon-circle-arrow-w"></span></a>
+							<div class="hide_sidebar">
+								{% block sidebar %}
+								{% endblock %}
+							</div>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<div id="modal_atendimento" title="{% trans 'create_consultation_modal_title' %}"></div>
+					<div id="modal_agenda" title="{% trans 'modal_agenda_manage_title' %}"></div>
+					<input type="hidden" value="{% url apps.atendimentos.views.inicializaModal %}" id="url_inicializa_modal" name="urlInicializaModal"/>
+					<script>
+						function abreModalAgenda(event, idMedico) {
+							event.preventDefault();
+							var field = "<input type='hidden' name='agenda.id' val='' class='medico_id'/>";
+							$('#modal_agenda .medico_id').remove();
+							$('#modal_agenda').append(field);
+							$('#modal_agenda .medico_id').val(idMedico);
+							var elem = $("div#modal_agenda");
+							elem.dialog("open");
+							$("div.ui-widget-overlay").bind("click", {elem:elem}, fechaModal);
+						}
+						
+						$(document).ready(function() {
+							var urlInicializaModal = $('input#url_inicializa_modal').val();
+							$("div#modal_atendimento").dialog({
+							autoOpen : false,
+							position : [ 'center', 'top' ],
+							width : 800,
+							modal : true,
+							zIndex : 20000,
+							open : function(event, ui) {
+								$.ajax({
+									type : 'GET',
+									url : urlInicializaModal,
+									success : function(resposta) {
+										$('div#modal_atendimento').html(resposta);
+									}
+								});
+							}
+						});
+					
+						$("div#modal_agenda").dialog({
+							autoOpen : false,
+							position : [ 'center', 'top' ],
+							width : 500,
+							modal : true,
+							zIndex : 20000,
+							open : function(event, ui) {
+								var idMedico = $('#modal_agenda .medico_id').val();
+								$.ajax({
+									type : 'GET',
+									data: {'medico_id': idMedico},
+									url : "/agenda/inicializaModal",
+									success : function(resposta) {
+										$('div#modal_agenda').html(resposta);
+									}
+								});
+							}
+						});
+						
+						function abreModalAtendimento(event) {
+							event.preventDefault();
+							var elem = $("div#modal_atendimento");
+							elem.dialog("open");
+							$("div.ui-widget-overlay").bind("click", {elem:elem}, fechaModal);
+						}
+						$('.atendimento_criar').bind('click', abreModalAtendimento);
+					
+						});	
+					</script>					
+					
+					<!-- 	end sidebar				 -->
+					
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		
+		{% include "base/_footer.html" %}
+		{% if request.session.django_language %}
+			<script type="text/javascript" src="/static/js/i18n/cultures/globalize.culture.{{ request.session.django_language }}.js" ></script>
+		{% endif %}
+		
+	</body>
+</html>

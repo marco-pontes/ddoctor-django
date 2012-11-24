@@ -1,0 +1,215 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}Atendente{% endblock %}
+{% block header %}
+<script type="text/javascript" src="/static/js/dashboard/atendente.js" ></script>
+{% endblock %}
+{% block breadcrumb %}
+	{% trans "dashboard_atendant_title" as nome %}
+	{% url dashboard_atendente as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+{% block conteudo %} 
+<div class="inner-page-title">
+	<h2>
+		{% trans "dashboard_atendant_welcome_message" %}
+	</h2>
+	<span>{% trans "dashboard_atendant_welcome_hint" %}</span>
+</div>
+<div class="clear"></div>
+<div class="content-box">
+	{% if messages %}
+		{% for message in messages %}
+	        <div class="response-msg {{ message.tags }} ui-corner-all">
+	        	{% if message.tags == "info" %}
+					<span> {% trans "info_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "success" %}
+					<span> {% trans "success_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "error" %}
+					<span> {% trans "error_box_label" %}</span>
+				{% endif %}
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+	<div class="clear"></div>
+	<div class="inner-page-title">
+		<h2>
+			{% trans "information_section_title" %}
+		</h2>
+		<span>{% trans "information_section_hint" %}
+		</span>
+	</div>
+	<div class="two-column">
+		<div class="column" style="width: 70%;">
+			<div class="content-box content-box-header">
+				
+				<div class="ui-state-default ui-corner-top ui-box-header">
+					<span class="ui-icon float-left ui-icon-signal"></span>
+					{% trans "header_autocomplete_paciente" %}
+				</div>
+				<div class="content-box-wrapper" id="info_paciente">
+					<label class="desc" for="lastname">{% trans "paciente_nome_label" %} </label>
+					<input type="text" value="" class="field text" name="autocomplete_pacientes_text" id="autocomplete_pacientes_text" style="width: 296px;" />
+					<div class="gray-box ui-corner-all" style="margin-bottom:5px;margin-top: 10px;">
+						<div class="cont ui-corner-all" style="line-height:1" >
+							<h3>{% trans "search_pacient_message" %}</h3>
+							<div class="two-column">
+								<div class="column" id="dados_paciente">
+									{% trans "pacient_info_here_message" %}
+								</div>
+								<div class="column">
+									<ul class="ui-widget ui-helper-clearfix invisivel" id="icons">
+										<a href="javascript: confirmaChegada();" class="btn ui-state-default ui-corner-all"
+											style="margin:0;">
+											<span class="ui-icon ui-icon ui-icon-cancel"></span>
+				  							{% trans "button_confirm_arrival" %}
+										</a>
+										
+									</ul>
+								</div>
+								<div class="clear"></div>
+							</div>
+						</div>
+					</div>
+					<div class="hastable">
+					{% if atendimentosAguardandoChegada|length > 0 %}
+							{% include "atendimento/_listaAtendimentos.html" %}
+					{% else %}
+						<div class="content-box-wrapper">
+							<h4 style="border-bottom:none;">{% trans "nenhuma_consulta_message" %}</h4>
+						</div>
+					{% endif %}
+				</div>				
+				</div>
+			</div>
+		</div>
+		<div class="column column-right" style="width: 28%;">
+			<div class="content-box content-box-header ui-corner-all">
+				<div class="ui-state-default ui-corner-top ui-box-header">
+					<span class="ui-icon float-left ui-icon-signal"></span>
+					{% trans "tabela_pendentes" %}
+				</div>
+				<div class="hastable">
+					{% if consultasAguardandoConfirmacao|length > 0 %}
+						<table cellspacing="0">
+							<thead>
+								<tr>
+									<td>{% trans "paciente_nome" %}</td>
+									<td>{% trans "paciente_documento" %}</td>
+									<td>{% trans "tabela_opcoes" %} </td>
+								</tr>
+							</thead>
+							<tbody>
+								{% for consulta in consultasAguardandoConfirmacao %}
+									<tr class="{% cycle '' 'alt' %}">  	  	
+										<td>
+											{{ consulta.paciente.first_name }}
+										</td>
+										<td>
+											{{ consulta.paciente.documento }}
+										</td>
+										<td>
+											<a href="#" class="btn ui-state-default ui-corner-all" >
+												<span class="ui-icon ui-icon ui-icon-gripsmall-diagonal-se"></span>
+					  							{% trans "botao_confirmar_atendimento" %}
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% else %}
+						<div class="content-box-wrapper">
+							<h4 style="border-bottom:none;">{% trans "nenhuma_consulta_message" %}</h4>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div class="column column-right" style="width: 28%;">
+			<div class="content-box content-box-header">
+				<div class="content-box-wrapper">
+					<h3>Resumo dos Atendimentos Atuais</h3>
+					<p>
+						<b>Atendimentos de hoje:</b>
+						{{ atendimentosHoje|length }}
+					</p>
+					<p>
+						<b>Próximos Atendimentos:</b>
+					 	{{ atendimentosMes|length }}
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+	<div class="inner-page-title">
+		<h2>
+			{% trans "personal_section_title" %}
+		</h2>
+		<span>{% trans "personal_section_hint" %}
+		</span>
+	</div>
+	<div class="two-column">
+		<div class="column" unselectable="on" style="-moz-user-select: none;">
+			{% include "dashboard/_listaMensagens.html" %}
+		</div>
+		<div class="column column-right" style="-moz-user-select: none;" unselectable="on">
+			<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
+				<div class="portlet ui-widget ui-helper-clearfix ui-corner-all">
+					<div class="portlet-header ui-widget-header">
+						{% trans "box_tasks_title" %}
+						<span class="ui-icon ui-icon-circle-arrow-s"></span>
+					</div>
+					<div class="portlet-content">
+						{% if listaTarefas|length > 0 %}
+							<div class="hastable minha-tabela">
+								{% for tarefa in listaTarefas %}
+									<span style="float:left;"></span>
+									<div class="yellow-box ui-corner-all other-box" style="margin-bottom:5px;">
+										<div class="cont ui-corner-all" style="line-height:1">
+											<h3>{% trans "attention_box_title" %}</h3>
+											{{ tarefa.nome }}
+											<a href="#" class="btn ui-state-default ui-corner-all"
+											style="margin:0;" onClick ="javascript:abreModalTarefa(event, {{tarefa.id}})">
+												<span class="ui-icon ui-icon ui-icon-cancel"></span>
+						  						{% trans "link_to_tarefas" %}
+											</a>
+											<div class="clear"></div>
+										</div>
+									</div>
+								{% endfor %}
+								<a href="{% url tarefa_listar %}">
+			  						{% trans "link_to_tarefas" %}
+								</a>
+							</div>
+						{% else %}
+							<div class="content-box-wrapper">
+								<h4 style="border-bottom:none;font-weight: bold;">{% trans "nenhuma_tarefa_message" %}</h4>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>						
+		</div>
+	</div>
+	<div class="clear"></div>
+	<div id="modal_tarefas" title="{% trans 'modal_task_manage_title' %}"></div>
+</div>
+{% endblock %}
+{% block sidebar %}
+<div class="box ui-widget ui-widget-content ui-corner-all">
+	<h3>Atendimentos</h3>
+	<div class="content">
+		<a class="btn ui-state-default full-link ui-corner-all atendimento_criar" href="#">
+			<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+			{% trans "button_atendimento_new_label" %}  
+		</a>
+	</div>
+</div>
+<div class="clear"></div>
+{% endblock %}

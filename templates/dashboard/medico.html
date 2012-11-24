@@ -1,0 +1,185 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}Medico{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/dashboard/medico.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "dashboard_doctor_title" as nome %}
+	{% url dashboard_medico as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %} 
+				<div class="inner-page-title">
+					<h2>
+						{% trans "dashboard_doctor_welcome_message" %}
+					</h2>
+					<span> {% trans "dashboard_doctor_welcome_hint" %}</span>
+				</div>
+				<div class="clear"></div>
+				<div class="content-box">
+				{% if messages %}
+					{% for message in messages %}
+				        <div class="response-msg {{ message.tags }} ui-corner-all">
+				        	{% if message.tags == "info" %}
+								<span> {% trans "info_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "success" %}
+								<span> {% trans "success_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "error" %}
+								<span> {% trans "error_box_label" %}</span>
+							{% endif %}
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+					<div class="clear"></div>
+					<div class="inner-page-title">
+						<h2>
+							{% trans "information_section_title" %}
+						</h2>
+						<span>{% trans "information_section_hint" %}</span>
+					</div>
+					<div class="three-column sortable">
+					<div class="three-col-mid">
+						<div class="column col1">
+							
+							<div class="content-box content-box-header ui-corner-all">
+								<div class="ui-state-default ui-corner-top ui-box-header">
+									<span class="ui-icon float-left ui-icon-signal"></span>
+									{% trans "dashboard_consultas_aguardando" %}
+								</div>
+								<div class="hastable">
+									{% if proximosAtendimentos|length > 0 %}
+										<table id="sort-table"> 
+											<thead>
+												<tr>
+													<td><input type="checkbox" class="checkbox" value="" />
+													</td>
+													<td>{% trans "dashboard_consultas_horario" %}</td>
+													<td>{% trans "dashboard_consultas_paciente_nome" %}</td>
+													<td>{% trans "dashboard_atendimento_status" %}</td>
+													<td>Pago?</td>
+	
+													<td>{% trans "dashboard_atendimento_opcoes" %}</td>
+												</tr>
+											</thead>
+											<tbody>
+													{% for atendimento in proximosAtendimentos %}
+														<tr class="{% cycle '' 'alt' %}">  	  	
+															<td>
+																<input type="checkbox" class="checkbox" value=""/>
+															</td>
+															<td>
+																{{ atendimento.consulta.data|date }}
+															</td>
+															<td>
+																{{ atendimento.paciente.first_name }}
+															</td>
+															<td>
+																{{ atendimento.status }}
+															</td>
+															<td>
+																{% if atendimento.pago %}
+																	{% trans "message_yes" %}
+																{% else %} 
+																	{% trans "message_no" %}
+																{% endif %}	
+															</td>
+															<td>
+																<a href="{% url consulta_entrevistaMedica %}?atendimento_id={{atendimento.id}}" class="btn ui-state-default ui-corner-all">
+																	<span class="ui-icon ui-icon ui-icon-gripsmall-diagonal-se"></span>
+																	{% trans "botao_iniciar_consulta" %}
+																</a>
+															</td>
+														</tr>
+													{% endfor %}
+											</tbody>
+										</table>
+									{% else %}
+										<div class="content-box-wrapper">
+											<h4 style="border-bottom:none;">{% trans "nenhuma_consulta_message" %}</h4>
+										</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+
+						<div class="column col2">
+							
+						</div>
+
+						<div class="column col3">
+
+							<div class="content-box content-box-header">
+								<div class="content-box-wrapper">
+									<h3>Resumo dos Atendimentos Atuais</h3>
+									<p>
+										<b>{% trans "atendimentos_aguardando_message" %} </b>
+										{{ proximosAtendimentos|length }}
+									</p>
+									<p>
+										<b>{% trans "consultas_finalizados_message" %}</b>
+										{{ consultasFinalizadas|length }}
+									</p>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+					<div class="inner-page-title">
+						<h2>
+							{% trans "personal_section_title" %}
+						</h2>
+						<span>{% trans "personal_section_hint" %}
+						</span>
+					</div>
+					<div class="two-column">
+						<div class="column" unselectable="on" style="-moz-user-select: none;">
+							{% include "dashboard/_listaMensagens.html" %}
+						</div>
+						<div class="column column-right" style="-moz-user-select: none;" unselectable="on">
+							<div class="portlet ui-widget ui-helper-clearfix ui-corner-all">
+								<div class="portlet-header ui-widget-header">
+									{% trans "box_agenda_title" %}
+									<span class="ui-icon ui-icon-circle-arrow-s"></span>
+										<div id="agendaDia"></div>
+										<a href="#" onClick="javascript:abreModalAgenda(event, {{request.user.id}})">
+											{% trans "link_agenda_medico" %}
+										</a>
+								</div>
+							</div>
+						
+						</div>
+						
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="invisivel">
+					{% for atendimento in proximosAtendimentos%}
+						<div class="evento">
+							<span class="titulo">Consulta {{ atendimento.paciente.nome }}</span>
+							<span class="inicio">{{ atendimento.consulta.data|date }}</span>
+						</div>
+					{% endfor %}
+				</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="box ui-widget ui-widget-content ui-corner-all">
+	<h3>{% trans "agenda_label_section" %}</h3>
+	<div class="content">
+		<a class="btn ui-state-default full-link ui-corner-all" href="#" onClick="javascript:abreModalAgenda(event, {{request.user.id}});">
+			<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+			{% trans "link_agenda_medico" %}  
+		</a>
+	</div>
+</div>
+{% endblock %}

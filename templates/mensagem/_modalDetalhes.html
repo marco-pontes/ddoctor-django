@@ -1,0 +1,45 @@
+{% load i18n %}
+<div id="page-layout">
+	<div id="page-content">
+		<div id="page-content-wrapper">
+			<div class="clear"></div>
+			<div class="content-box">
+	            {% if messages %}
+					{% for message in messages %}
+				        <div class="response-msg {{ message.tags }} ui-corner-all">
+				        	{% if message.tags == "info" %}
+								<span> {% trans "info_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "success" %}
+								<span> {% trans "success_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "error" %}
+								<span> {% trans "error_box_label" %}</span>
+							{% endif %}
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+         			<div class="cont ui-corner-all" style="line-height:1">
+					<h3 style="display:inline;font-weight: bold;">{{ mensagem.assunto }}</h3>
+					<div>
+						{{ mensagem.dataEnvio|date }}  
+					</div>
+					<div>
+						{{ mensagem.remetente.nome }}
+					</div>
+					<div class="task-text">
+						{{ mensagem.corpo }}
+					</div>
+					<div class="buttons-wrapper">
+						<a class="btn ui-state-default ui-corner-all apagar" href ="#" onClick="javascript:apagaEmail(event, {{mensagem.id}})">
+							<span class="ui-icon ui-icon-grip-dotted-horizontal"></span>
+							{% trans "box_email_delete" %}
+						</a>
+						<div class="clear"></div>
+					</div>
+        		</div>
+			</div>
+		</div>
+	</div>	
+</div>

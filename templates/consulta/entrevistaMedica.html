@@ -1,0 +1,121 @@
+{% extends "base/main.html" %}
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}{% trans "default_create_label" %}{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "enterview_title" as nome %}
+	{% url consulta_entrevistaMedica as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+{% block conteudo %} 
+<div class="inner-page-title">
+    <h2>{% trans "consultation_enterview_welcome_message" %}</h2>
+	<span>{% trans "consultation_enterview_welcome_hint" %}</span>
+</div>
+<div class="clear"></div>
+<div class="content-box">
+	{% if messages %}
+		{% for message in messages %}
+	        <div class="response-msg {{ message.tags }} ui-corner-all">
+	        	{% if message.tags == "info" %}
+					<span> {% trans "info_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "success" %}
+					<span> {% trans "success_box_label" %}</span>
+				{% endif %}
+				{% if message.tags == "error" %}
+					<span> {% trans "error_box_label" %}</span>
+				{% endif %}
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+ 	{% if messages %}	
+	   <div class="response-msg error ui-corner-all">
+	     <span>{% trans "error_box_label" %}</span>
+			{% for field in entrevistaForm %}
+			{% for error in field.errors %}
+			     <li> [{{ field.label}}] {{ error }} </li>
+			  {% endfor %}
+			{% endfor %}
+	    </div>
+	{% endif %}
+	 <form  action="/consulta/salvarEntrevista/" method="post">
+	  	{% csrf_token %}
+		<input type="hidden" id='atendimento_id' name='atendimento_id' value='{{atendimentoId}}' />
+		<ul>
+			<li>
+				<label for="altura" class="desc">
+						{% trans "entrevista_altura_label" %}
+				</label>
+				<div>
+					{{ entrevistaForm.altura.errors }}
+					{{ entrevistaForm.altura }}
+					{ f.text_field :problema, :class => "field text small" }
+				</div>
+			</li>
+			<li>
+				<label for="peso" class="desc">
+						{% trans "entrevista_peso_label" %}
+				</label>
+				<div>
+					{{ entrevistaForm.peso.errors }}
+					{{ entrevistaForm.peso }}
+				</div>
+			</li>
+			<li>
+			<label for="pressao" class="desc">
+				{% trans "entrevista_pressao_label" %}
+			</label>
+						<div>
+				{{ entrevistaForm.pressao.errors }}
+				{{ entrevistaForm.pressao }}
+						</div>
+			</li>
+			<li>
+				<label for="problema" class="desc">
+						{% trans "entrevista_problema_label" %}
+				</label>
+				<div>
+					{{ entrevistaForm.problema.errors }}
+					{{ entrevistaForm.problema }}
+				</div>
+			</li>
+			<li>
+				<label for="medicacao" class="desc">
+						{% trans "entrevista_medicacao_label" %}
+				</label>
+				<div>
+					{{ entrevistaForm.medicacao.errors }}
+					{{ entrevistaForm.medicacao }}
+				</div>
+			</li> 
+			<li>
+				<label for="observacoes" class="desc">
+						{% trans "entrevista_observacoes_label" %}
+				</label>
+				<div>
+					{{ entrevistaForm.observacoes.errors }}
+					{{ entrevistaForm.observacoes }}
+				</div>
+			</li>  
+			<li>
+				<label for="laudoMedico" class="desc">
+						{% trans "entrevista_laudoMedico_label" %}
+				</label>
+				<div>
+					{{ entrevistaForm.laudoMedico.errors }}
+					{{ entrevistaForm.laudoMedico }}
+				</div>
+				</li>         
+	                   
+	             <li class="buttons">
+	             	<input type="submit" class="ui-state-default ui-corner-all ui-button" value="{% trans 'button_finish_enterview_label'%}" />
+	             </li>
+	        </ul>
+	 </form>
+</div>
+{% endblock %}
+{% block sidebar %}
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends "base/main.html" %}
+{% load humanize %} 
+{% load i18n %}
+{% load ddoctor_tags %}
+{% block title %}Paciente{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="/static/js/dashboard/paciente.js" ></script>
+<script type="text/javascript" src="/static/js/ui/ui.accordion.js" ></script>
+<script type="text/javascript" src="/static/js/highcharts.js" ></script>
+{% endblock %}
+
+{% block breadcrumb %}
+	{% trans "dashboard_pacient_title" as nome %}
+	{% url dashboard_atendente as url %}
+	{% render_breadcrumb request nome url True %}
+{% endblock %}
+
+{% block conteudo %} 
+				<div class="inner-page-title">
+					<h2>
+						{% trans "dashboard_pacient_welcome_message" %}
+					</h2>
+					<span>{% trans "dashboard_pacient_welcome_hint" %}</span>
+				</div>
+				<div class="clear"></div>
+				<div class="content-box">
+				{% if messages %}
+					{% for message in messages %}
+				        <div class="response-msg {{ message.tags }} ui-corner-all">
+				        	{% if message.tags == "info" %}
+								<span> {% trans "info_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "success" %}
+								<span> {% trans "success_box_label" %}</span>
+							{% endif %}
+							{% if message.tags == "error" %}
+								<span> {% trans "error_box_label" %}</span>
+							{% endif %}
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+					<div class="clear"></div>
+					<div class="inner-page-title">
+						<h2>
+							{% trans "information_section_title" %}
+						</h2>
+						<span>{% trans "information_section_hint" %}
+						</span>
+					</div>
+					<div class="three-column sortable">
+					<div class="three-col-mid">
+						<div class="column col1">
+							<div class="content-box content-box-header">
+								<div class="content-box-wrapper">
+									<div id="chart1"></div>
+								</div>
+							</div>
+						</div>
+
+						<div class="column col2">
+							<div class="content-box content-box-header">
+								<div class="ui-state-default ui-corner-top ui-box-header">
+									<span class="ui-icon float-left ui-icon-signal"></span>
+									{% trans "title_section_proximas_consultas" %}
+								</div>
+								<div class="yellow-box ui-corner-all" >
+									<div class="cont ui-corner-all" style="line-height:1">
+										{% if proximasConsultas|length > 0 %}
+											{% for proximaConsulta in proximasConsultas %}
+												<div class="medico" style="width: 100%;">
+													<div class="foto_pequena">
+														<img src="/static/images/no_picture_doctor_small2.png">
+													</div>
+													<div class="dados" style="width: 57%;">
+														<a href="{% url medico_mostrar proximaConsulta.paciente.id %}">
+																<h4>{{ proximaConsulta.medico.nome }} </h4>
+														</a>
+														<div style="padding: 5px 5px;">
+															{{ proximaConsulta.data|date }}
+															{% trans "paciente_email_label" %}
+															{{ proximaConsulta.medico.especialidade.nome }}
+															<a href="{% url consulta_cancelar %}?id={{proximaConsulta.id}}" class="btn ui-state-default full-link ui-corner-all">
+																{% trans "button_cancel_consultation" %}
+															</a>
+														</div>
+													</div>
+												</div>
+											{% endfor %}
+										{% else %}
+											<div class="content-box-wrapper">
+												<h4 style="border-bottom:none;font-weight: bold;">{% trans "nenhuma_proxima_consulta_message" %}</h4>
+											</div>
+										{% endif %}
+										<div class="clear"></div>
+									</div>
+								</div>
+							</div>
+							<div class="content-box content-box-header">
+								<div class="ui-state-default ui-corner-top ui-box-header">
+									<span class="ui-icon float-left ui-icon-signal"></span>
+									{% trans "unconfirmed_consultations_box_title" %}
+								</div>
+								<div class="gray-box ui-corner-all" >
+									{% if consultasNaoConfirmadas|length > 0 %}
+										{% for consulta in consultasNaoConfirmadas %}
+											<div class="medico" style="width: 100%;">
+												<div class="foto_pequena">
+													<img src="/static/images/no_picture_doctor_small2.png">
+												</div>
+												<div class="dados" style="width: 57%;">
+													<a href="{% url medico_mostrar id=consulta.medico.id %}">
+														<h4>{{ consulta.medico.first_name }}</h4>
+													</a>
+													<div style="padding: 5px 5px;">
+														{{ consulta.data }}
+														{% trans "paciente_email_label" %}
+														{{ consulta.medico.especialidade.nome }}
+														<a href="{% url consulta_apagar id=consulta.id %}" class="btn ui-state-default full-link ui-corner-all">
+															{% trans "button_remove_consultation" %}
+														</a>
+													</div>
+												</div>
+											</div>
+										{% endfor %}
+									{% else %}
+										<div class="content-box-wrapper">
+											<h4 style="border-bottom:none;font-weight: bold;">
+												{% trans "nenhuma_proxima_consulta_message" %}</h4>
+										</div>
+									{% endif %}
+									<div class="clear"></div>
+								</div>
+							</div>
+						</div>
+
+						<div class="column col3">
+							<div class="content-box content-box-header ui-corner-all">
+								<div class="ui-state-default ui-corner-top ui-box-header">
+									<span class="ui-icon float-left ui-icon-signal"></span>
+									{% trans "historico_consultas_titulo" %}
+								</div>
+								{% if atendimentosAnteriores|length > 0 %}
+									<div id="accordion">
+										{% for atendimento in atendimentosAnteriores %}
+											<h3>
+												<a href="#">{{ atendimento.consulta.medico.especialidade.nome }}
+													<span style="float:right">
+														{{ atendimento.precoTotal|intcomma }}
+													</span>
+												</a>
+											</h3>
+											<div>
+											{% if atendimento.consulta.id != None %}
+												{{ atendimento.data|date }}
+													<ul>
+														<li><b>{{ atendimento.consulta.medico.first_name }}</b></li>
+														<li>{{ atendimento.consulta.medico.precoConsulta|intcomma }}</li>
+													</ul>
+											{% endif %}
+											{% if atendimento.exames.all|length > 0 %}
+												<h4>{% trans "exames_section_label" %}</h4>
+												{% for exame in atendimento.exames %}
+													<ul>
+														<li>
+															<b>{{ exame.nome }}</b>: 
+															{{ exame.preco|intcomma }}
+														</li>
+													</ul>
+												{% endfor %}
+											{% endif %}
+											</div>
+										{% endfor %}
+									</div>
+								{% else %}
+									<div class="content-box-wrapper">
+										<h4 style="border-bottom:none;font-weight: bold;">
+											{% trans "nenhuma_consulta_anterior_message" %}</h4>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+					<div class="inner-page-title">
+						<h2>
+							{% trans "personal_section_title" %}
+						</h2>
+						<span>{% trans "personal_section_hint" %}
+						</span>
+					</div>
+					<div class="two-column">
+						<div class="column" unselectable="on" style="-moz-user-select: none;">
+							{% include "dashboard/_listaMensagens.html" %}
+						</div>
+						<div class="column column-right" style="-moz-user-select: none;" unselectable="on">
+							<div class="other-box gray-box float-left ui-corner-all" style="margin:0; width: 100%;">
+								<div class="cont ui-corner-all hastable">
+									<h3>{% trans "healthcare_plan_title" %}</h3>
+									<table cellspacing="0" class="plano-saude">
+											<thead>
+												<tr>
+													<td>Nome</td>
+													<td>Tipo</td>
+	
+													<td>Validade</td>
+													<td>Numero</td>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>
+														<p>{{ user.usuario.paciente.planoSaude.nome }}</p>
+													</td>
+												
+													<td>
+														<p>{{ user.usuario.paciente.planoSaude.tipo }}</p>
+													</td>
+												
+													<td>
+														<p>{{ user.usuario.paciente.planoSaude.validade|date }}</p>
+													</td>
+												
+													<td>
+														<p>{{ user.usuario.paciente.planoSaude.numero }}</p>
+													</td>
+												</tr>
+											</tbody>
+									</table>
+								</div>
+							</div>
+						
+						</div>
+					</div>
+					<div class="clear"></div>
+					<div id="modal_consulta" title="{% trans 'modal_marcar_consulta_title' %}">
+					</div>
+					{% for atendimento in graficoAtendimentosAnteriores %}
+						<div class="atendimento">
+							<input type="hidden" class="valor" value="{{ atendimento.valor|intcomma}}">
+							<input type="hidden" class="data" value="{{ atendimento.data|date:'scheduled_events'}}">
+						</div>
+					{% endfor %}
+				</div>
+				{% endblock %}
+
+{% block sidebar %}
+<div class="box ui-widget ui-widget-content ui-corner-all">
+	<h3>{% trans "titulo_consultas" %}</h3>
+	<div class="content">
+		<a href="#" class="btn ui-state-default full-link ui-corner-all consulta_criar">
+			<span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>
+			{% trans "botao_incluir_consulta" %}
+		</a>
+	</div>
+</div>
+{% endblock %}
